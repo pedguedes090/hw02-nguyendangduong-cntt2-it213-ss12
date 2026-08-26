@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: logistics-mcp-server
+  main:
+    # Bảo hiểm song song: ép Spring không in banner kể cả khi chạy qua --spring.main.banner-mode
+    banner-mode: "off"
+  ai:
+    mcp:
+      server:
+        # Chạy MCP server qua Stdio transport (mặc định) để tích hợp Claude Desktop
+        stdio: true

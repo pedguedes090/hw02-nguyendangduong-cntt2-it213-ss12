@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  BẢN VÁ Logback cho MCP Server dùng Stdio transport.
+  ---------------------------------------------------
+  MCP Client giao tiếp với Server qua JSON-RPC trên stdin/stdout.
+  MỌI LOG của Logback BẮT BUỘC ghi vào System.err (StderrAppender)
+  để KHÔNG làm bẩn luồng System.out chuyên dụng cho JSON-RPC.
+-->
+<configuration>
+
+    <!--
+      Appender ghi log ra Standard Error (System.err).
+      target="SYSTEM_ERR": Logback in log xuống luồng lỗi chuẩn,
+      hoàn toàn tách biệt với luồng System.out dùng cho giao thức MCP.
+    -->
+    <appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <target>System.err</target>
+    </appender>
+
+    <!--
+      Appender file dự phòng để lưu vết log dài hạn (tùy chọn).
+      Ghi ra đĩa giúp lập trình viên theo dõi lịch sử mà không dùng System.out.
+    -->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_PATH:-./logs}/logistics-mcp.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- Gốc: toàn bộ log (INFO/DEBUG/ERROR...) đều đi qua STDERR (và FILE), KHÔNG ra System.out -->
+    <root level="INFO">
+        <appender-ref ref="STDERR" />
+        <appender-ref ref="FILE" />
+    </root>
+
+    <!-- Nếu muốn xem log DEBUG của riêng package MCP, bật lên -->
+    <logger name="com.rikkei.mcp" level="DEBUG" additivity="true" />
+
+</configuration>
